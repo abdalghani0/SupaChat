@@ -9,7 +9,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@/components/ui/alert-dialog"
+  } from "@/components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
@@ -18,14 +18,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"  
-import { Button } from "@/components/ui/button"
-import { Imessage, useMessage } from "@/lib/store/messages"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input"; 
+import { Button } from "@/components/ui/button";
+import { Imessage, useMessage } from "@/lib/store/messages";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
-import { useRef } from "react"
+import { useRef } from "react";
   
   export function DeleteAlert() {
     const actionMessage = useMessage((state) => state.actionMessage);
