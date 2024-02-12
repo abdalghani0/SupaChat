@@ -1,16 +1,14 @@
 "use server";
-
 import React from "react";
 import ChatHeader from "@/components/ChatHeader";
-import { supabaseServer } from "@/lib/supabase/server";
 import InitUser from "@/lib/store/initUser";
 import ChatInput from "@/components/ChatInput";
-import ListMessages from "@/components/ListMessages";
 import ChatMessages from "@/components/ChatMessages";
 import ChatAbout from "@/components/ChatAbout";
+import { supabaseServer } from "@/lib/supabase/server";
 
 export default async function Page() {
-  const supabase = supabaseServer();
+  const supabase = await supabaseServer();
   const { data } = await supabase.auth.getSession();
 
   return (
