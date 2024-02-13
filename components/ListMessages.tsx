@@ -36,12 +36,13 @@ export default function ListMessages() {
                 ...payload.new,
                 users:data
               }
-              if(payload.new.send_by !== user?.id)
+              if(payload.new.send_by !== user?.id){
                 addMessage(newMessage as unknown as Imessage);
+                new Notification("New Message", {
+                  body: newMessage.text,
+                })
+              }
             }
-            new Notification("New Message", {
-              body: newMessage.text,
-            })
           }
           const scrollContainer = scrollRef.current;
           if(scrollContainer.scrollTop < scrollContainer.scrollHeight - scrollContainer.clientHeight -10)
