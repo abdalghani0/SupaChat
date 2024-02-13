@@ -39,7 +39,7 @@ export default function ListMessages() {
               if(payload.new.send_by !== user?.id){
                 addMessage(newMessage as unknown as Imessage);
                 new Notification("New Message", {
-                  body: newMessage.text,
+                  body: payload.new.text,
                 })
               }
             }
