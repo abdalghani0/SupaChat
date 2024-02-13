@@ -38,8 +38,10 @@ export default function ListMessages() {
               }
               if(payload.new.send_by !== user?.id)
                 addMessage(newMessage as unknown as Imessage);
-              console.log("new message 1");
             }
+            new Notification("New Message", {
+              body: newMessage.text,
+            })
           }
           const scrollContainer = scrollRef.current;
           if(scrollContainer.scrollTop < scrollContainer.scrollHeight - scrollContainer.clientHeight -10)
