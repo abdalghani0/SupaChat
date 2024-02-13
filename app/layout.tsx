@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
+import Script from "next/script";
 
 const space_Grotesk = Space_Grotesk({ subsets: ["latin"] });
 
@@ -18,6 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+
+    <Script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></Script>
+    <Script src="@lib/oneSignal"></Script>
+
       <body className={space_Grotesk.className}>
         <ThemeProvider
           attribute="class"
