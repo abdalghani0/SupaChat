@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
 
       <Script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></Script>
-      <Script src="/oneSignal"></Script>
+      <Script src="/oneSignal.js"></Script>
     
 
       <body className={space_Grotesk.className}>
