@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
     <Head>
       <Script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></Script>
-      <Script src="@lib/oneSignal"></Script>
+      <Script src="public/oneSignal"></Script>
     </Head>
     
 
