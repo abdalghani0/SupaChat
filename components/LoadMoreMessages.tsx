@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { LIMIT_MESSAGE } from '@/lib/constants/idex';
 import { getFromAndTo } from '@/lib/utils';
-import { useMessage } from '@/lib/store/messages';
+import { Imessage, useMessage } from '@/lib/store/messages';
 import { toast } from 'sonner';
 
 function LoadMoreMessages() {
@@ -24,7 +24,7 @@ function LoadMoreMessages() {
             toast.error(error.message)
         }
         else {
-            setMessages(data.reverse());
+            setMessages(data.reverse() as Imessage[] || []);
         }
     }
     if(hasMore) {
