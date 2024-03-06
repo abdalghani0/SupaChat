@@ -13,12 +13,13 @@ function Friend({ room, index } : { room : room, index : number }) {
     const {users} = useUsers();
     const {user} = useUser();
     const currentUser = users.find((u) => u?.id === user?.id);
-    let user2 = users.find((u) => u?.id === room.user2_id);
+    const user2 = users.find((u) => u?.id === room.user2_id);
+    const user1 = users.find((u) => u?.id === room.user1_id);
+    let contact;
     if(currentUser === user2) 
-        user2 = users.find((u) => u?.id === room.user1_id);
-    const contact = currentUser?.id === room.user1_id
-        ? user2
-        : currentUser;
+        contact = user1;
+    else
+     contact = user2;
 
     const handleFriendClick = () => {
         setCurrentRoom(room);
