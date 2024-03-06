@@ -1,15 +1,14 @@
 "use client";
 
-import { User } from '@supabase/supabase-js';
 import React, { useEffect, useRef } from 'react';
-import { useUser } from './user';
+import { room, useRooms } from './rooms';
 
-function InitUser({user} : { user: User|undefined }) {
+function InitRooms({rooms} : { rooms: room[]}) {
     const initState = useRef(false);
 
     useEffect(() => {
         if(!initState.current) {
-            useUser.setState({ user });
+            useRooms.setState({ rooms });
         }
         initState.current = true;
     },[])
@@ -17,4 +16,4 @@ function InitUser({user} : { user: User|undefined }) {
     return <></>
 }
 
-export default InitUser;
+export default InitRooms;

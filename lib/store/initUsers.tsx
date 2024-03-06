@@ -1,15 +1,14 @@
 "use client";
 
-import { User } from '@supabase/supabase-js';
 import React, { useEffect, useRef } from 'react';
-import { useUser } from './user';
+import { IUser, useUsers } from './users';
 
-function InitUser({user} : { user: User|undefined }) {
+function InitUsers({users} : { users: IUser[]}) {
     const initState = useRef(false);
 
     useEffect(() => {
         if(!initState.current) {
-            useUser.setState({ user });
+            useUsers.setState({ users });
         }
         initState.current = true;
     },[])
@@ -17,4 +16,4 @@ function InitUser({user} : { user: User|undefined }) {
     return <></>
 }
 
-export default InitUser;
+export default InitUsers;

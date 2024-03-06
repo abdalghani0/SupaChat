@@ -13,10 +13,11 @@ export type Imessage = {
         display_name: string;
         id: string;
     } | null;
+    room_id: string;
 }
 
 interface MessageState {
-    hasMore: boolean
+    hasMore: boolean;
     page: number;
     messages: Imessage[];
     actionMessage: Imessage | undefined;

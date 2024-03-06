@@ -8,17 +8,19 @@ import { toast } from 'sonner';
 import { ArrowDown } from 'lucide-react';
 import { useUser } from '@/lib/store/user';
 import LoadMoreMessages from './LoadMoreMessages';
+import { useRooms } from '@/lib/store/rooms';
 
 export default function ListMessages() {
   const scrollRef = useRef() as  React.MutableRefObject<HTMLDivElement>;
   const {messages, addMessage, optimisticId, optimisticDeleteMessage, optimisticUpdateMessage} = useMessage((state) => state);
   const user = useUser((state) => state.user);
+  const {currentRoom, addMessageToRoom, currentRoomMessages} = useRooms();
   const supabase = supabaseBrowser();
   const [userScrolled, setUserScrolled] = useState(false);
   const [notification, setNotification] = useState(0);
 
   useEffect(() => { 
-    //real time insert listener for messages
+    //real time insert, delete, update listener for messages from all contacts
     const channel = supabase
       .channel("chat-room")
       .on(
@@ -38,14 +40,12 @@ export default function ListMessages() {
               }
               if(payload.new.send_by !== user?.id){
                 addMessage(newMessage as unknown as Imessage);
-                new Notification("New Message", {
-                  body: payload.new.text,
-                })
+                addMessageToRoom(newMessage as unknown as Imessage)
               }
             }
           }
           const scrollContainer = scrollRef.current;
-          if(scrollContainer.scrollTop < scrollContainer.scrollHeight - scrollContainer.clientHeight -10)
+          if((scrollContainer.scrollTop < scrollContainer.scrollHeight - scrollContainer.clientHeight -10) && payload.new.room_id === currentRoom?.id)
             setNotification((current) => current + 1);
           
         }
@@ -70,7 +70,7 @@ export default function ListMessages() {
     if(scrollContainer && !userScrolled) {
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
     }
-  },[messages])
+  },[currentRoomMessages])
 
   const handleOnScroll = () => {
     const scrollContainer = scrollRef.current;
@@ -101,7 +101,7 @@ export default function ListMessages() {
 
             <div className="space-y-7">
 
-              {messages.map((value, index) => {
+              {currentRoomMessages.map((value, index) => {
                 return (
                   <Message key={index} message={value} />
                 )
