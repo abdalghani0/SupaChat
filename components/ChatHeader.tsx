@@ -49,7 +49,7 @@ export default function ChatHeader({ user } : { user: User | undefined}) {
     };
 
     return (
-        <div className="h-20 fixed">
+        <div className="h-20 sticky">
 
           <div className="p-5 border-b flex items-center justify-between h-full">
 
