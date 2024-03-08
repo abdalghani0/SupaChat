@@ -16,7 +16,7 @@ export default function Message({message} : {message: Imessage}) {
     const user = useUser((state) => state.user);
 
     return (
-        <div className="flex gap-2">
+        <div dir="rtl" className="flex gap-2">
 
             <div>
                 <Image 
