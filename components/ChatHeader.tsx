@@ -49,13 +49,13 @@ export default function ChatHeader({ user } : { user: User | undefined}) {
     };
 
     return (
-        <div className="h-20 sticky">
+        <div className="h-20 max-md:fixed w-full">
 
           <div className="p-5 border-b flex items-center justify-between h-full">
 
             <div>
 
-              <h1 className="text-l font-bold">{user && currentRoom ? roomName : "SupaChat"}</h1>
+              <h1 className="text-xl font-bold">{user && currentRoom ? roomName : "SupaChat"}</h1>
 
               <ChatPresence/>
 
