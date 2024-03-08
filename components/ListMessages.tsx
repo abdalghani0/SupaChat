@@ -118,7 +118,7 @@ export default function ListMessages() {
                 <EditAlert />
                     
               </div>
-            : <div className="m-auto text-2xl space-y-2">
+            : <div className="m-auto text-xl md:text-2xl space-y-2">
                 <Image 
                   src="/chat.jpg"
                   alt="chatting icon"
