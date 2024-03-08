@@ -21,9 +21,7 @@ export default async function Page() {
           ? <div className="max-w-60 hidden md:flex flex-col overflow-auto h-full border rounded-md">
               <Contacts userId={data.session?.user.id}/>
             </div>
-          : <div className="max-w-60 hidden md:flex flex-col overflow-auto h-full border rounded-md">
-          <Contacts userId={data.session?.user.id}/>
-        </div>
+          : null
         }
         
 
