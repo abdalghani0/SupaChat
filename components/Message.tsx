@@ -37,7 +37,7 @@ export default function Message({message} : {message: Imessage}) {
                     {message.users?.id === user?.id && <MessageMenu message={message}/>}
                 </div>
 
-                <p className="text-gray-300">{message.text}</p>
+                <p dir="rtl" className="text-gray-300">{message.text}</p>
 
             </div>
 
