@@ -62,8 +62,11 @@ export default function ChatHeader({ user } : { user: User | undefined}) {
             </div>
             
             <div className="flex gap-3">
-
-              <ContactsDrawer />
+              {user 
+                ? <ContactsDrawer />
+                : null
+              }
+              
 
               {user ? <Button onClick={handleLogout}>logout</Button>
                     : <Button onClick={handleLoginWithGithub}>login</Button>
