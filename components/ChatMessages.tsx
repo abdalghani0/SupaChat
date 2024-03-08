@@ -16,7 +16,7 @@ export default async function ChatMessages({userRooms} : {userRooms : string[]})
     return (
         <Suspense fallback="loading..">
             <ListMessages/>
-            <InitMessages messages={data?.reverse() as Imessage[] || []}/>
+            <InitMessages messages={data?.reverse() as Imessage[]}/>
         </Suspense>
     );
 }
