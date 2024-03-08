@@ -7,8 +7,8 @@ import { supabaseBrowser } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
 import { ArrowDown } from 'lucide-react';
 import { useUser } from '@/lib/store/user';
-import LoadMoreMessages from './LoadMoreMessages';
 import { useRooms } from '@/lib/store/rooms';
+import Image from 'next/image';
 
 export default function ListMessages() {
   const scrollRef = useRef() as  React.MutableRefObject<HTMLDivElement>;
@@ -90,29 +90,45 @@ export default function ListMessages() {
 
     return (
       <>
-        <div 
-          ref={scrollRef} 
-          className="flex-1 flex flex-col p-5 h-full overflow-y-auto"
-          onScroll={handleOnScroll}>
+        {
+          currentRoom
+            ? <div 
+                ref={scrollRef} 
+                className="flex-1 flex flex-col p-5 h-full overflow-y-auto"
+                onScroll={handleOnScroll}>
 
-          <div className="flex-1 mb-5">
-            <LoadMoreMessages/>
-          </div>
-
-            <div className="space-y-7">
-
-              {currentRoomMessages.map((value, index) => {
-                return (
-                  <Message key={index} message={value} />
-                )
-              })}
-              
-            </div>
-
-          <DeleteAlert />
-          <EditAlert />
-              
-        </div>
+                  <div className="flex-1 mb-5">
+                    {/* 
+                      <LoadMoreMessages/>
+                    */}
+                  </div>
+                
+      
+                <div className="space-y-7">
+      
+                  {currentRoomMessages.map((value, index) => {
+                    return (
+                      <Message key={index} message={value} />
+                    )
+                  })}
+                    
+                </div>
+      
+                <DeleteAlert />
+                <EditAlert />
+                    
+              </div>
+            : <div className="m-auto text-2xl space-y-2">
+                <Image 
+                  src="/public/chat.jpg"
+                  alt="chatting icon"
+                  width={80}
+                  height={80}
+                  className="mx-auto"/>
+                <p>Select a friend to chat with</p>
+              </div>
+        }
+        
 
         {userScrolled && 
           <div className="absolute bottom-20 w-full">

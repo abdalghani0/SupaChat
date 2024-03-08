@@ -7,7 +7,6 @@ import {
   } from "@/components/ui/popover";
 import Contact from "./Contact";
 import { useUsers } from "@/lib/store/users";
-import { useUser } from "@/lib/store/user";
 import ListFriends from "./ListFriends";
 
 function ListContacts() {

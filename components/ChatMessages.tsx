@@ -11,9 +11,7 @@ export default async function ChatMessages({userRooms} : {userRooms : string[]})
         .from("messages")
         .select("*, users(*)")
         .in("room_id", userRooms)
-        .range(0,LIMIT_MESSAGE)
         .order("created_at", {ascending: false});
-    console.log(data);
 
     return (
         <Suspense fallback="loading..">

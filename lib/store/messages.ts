@@ -17,7 +17,6 @@ export type Imessage = {
 }
 
 interface MessageState {
-    hasMore: boolean;
     page: number;
     messages: Imessage[];
     actionMessage: Imessage | undefined;
@@ -31,7 +30,6 @@ interface MessageState {
 }
 
 export const useMessage = create<MessageState>()((set) => ({
-    hasMore: true,
     page: 1,
     messages: [],
     actionMessage: undefined,

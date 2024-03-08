@@ -25,14 +25,17 @@ import { Imessage, useMessage } from "@/lib/store/messages";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRef } from "react";
+import { useRooms } from "@/lib/store/rooms";
   
   export function DeleteAlert() {
     const actionMessage = useMessage((state) => state.actionMessage);
-    const optimisticDeleteMessage = useMessage((state) => state.optimisticDeleteMessage )
+    const optimisticDeleteMessage = useMessage((state) => state.optimisticDeleteMessage);
+    const {deleteMessageFromRoom} = useRooms();
 
     const handleDeleteMessage = async() => {
         const supabase = supabaseBrowser();
         optimisticDeleteMessage(actionMessage?.id!);
+        deleteMessageFromRoom(actionMessage?.id!);
         const {error} = await supabase.from("messages").delete().eq("id", actionMessage?.id!);
         if(error) {
             toast.error(error.message);

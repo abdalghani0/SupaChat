@@ -12,14 +12,17 @@ interface RoomsState {
     rooms: room[];
     currentRoom: room | undefined;
     currentRoomMessages: Imessage[];
+    hasMore: boolean;
     addRoom: (newRoom : room) => void;
     setCurrentRoom: (room : room) => void;
     addMessageToRoom: (messaage: Imessage) => void;
     setRoomMessages: (messags : Imessage[]) => void;
+    deleteMessageFromRoom: (messageId : string) => void;
 }
 
 export const useRooms = create<RoomsState>()((set) => ({
   rooms: [],
+  hasMore: true,
   currentRoom: undefined,
   currentRoomMessages: [],
   addRoom: (newRoom) => set((state) => ({
@@ -33,5 +36,8 @@ export const useRooms = create<RoomsState>()((set) => ({
   })),
   setRoomMessages: (messages) => set(() => ({
     currentRoomMessages: messages,
+  })),
+  deleteMessageFromRoom:(messaageId) => set((state) => ({
+    currentRoomMessages: state.currentRoomMessages.filter((m) => (m.id !== messaageId)),
   })),
 }))

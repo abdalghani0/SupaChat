@@ -26,7 +26,6 @@ export default async function Contacts({userId} : {userId : string | undefined})
         }
     } catch (error) {
         console.error("Error fetching rooms:", error);
-        // Handle error here if needed
     }
 
     return (

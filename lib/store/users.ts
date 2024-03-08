@@ -10,11 +10,13 @@ export type IUser = {
 
 interface UsersState {
     users: IUser[];
+    currentUser: IUser;
     setUsers: (newUsers: IUser[]) => void;
 }
 
 export const useUsers = create<UsersState>()((set) => ({
   users: [],
+  currentUser: null,
   setUsers: (newUsers) => set(() => ({
     users: newUsers,
   })),

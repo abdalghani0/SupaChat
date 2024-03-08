@@ -34,7 +34,6 @@ function ChatInput() {
             addMessage(newMessage as Imessage);
             addMessageToRoom(newMessage as Imessage);
             setOptimisticId(newMessage.id);
-            console.log("new message 2");
             const {error} = await supabase.from("messages").insert({ text, room_id:newMessage.room_id });
             if(error) {
                 toast.error(error.message);

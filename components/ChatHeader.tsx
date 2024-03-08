@@ -7,6 +7,18 @@ import { useRouter } from 'next/navigation';
 import ChatPresence from './ChatPresence';
 import { useRooms } from '@/lib/store/rooms';
 import { useUsers } from '@/lib/store/users';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import Contacts from './Contacts';
+import ListContacts from './ListContacts';
+import { MoreHorizontal } from 'lucide-react';
+
 
 export default function ChatHeader({ user } : { user: User | undefined}) {
 
@@ -19,7 +31,6 @@ export default function ChatHeader({ user } : { user: User | undefined}) {
       user?.id === currentRoom?.user1_id 
         ? user2?.display_name 
         : currentUser?.display_name;
-    console.log("room: " + roomName)
 
     const handleLoginWithGithub = () => {
         const supabase = supabaseBrowser();
@@ -49,13 +60,38 @@ export default function ChatHeader({ user } : { user: User | undefined}) {
               <ChatPresence/>
 
             </div>
+            
+            <div className="flex gap-3">
 
-            {user ?  <Button onClick={handleLogout}>logout</Button>
-                  :   <Button onClick={handleLoginWithGithub}>login</Button>
-            }
+              <ContactsDrawer />
+
+              {user ? <Button onClick={handleLogout}>logout</Button>
+                    : <Button onClick={handleLoginWithGithub}>login</Button>
+              }
+
+            </div>
 
           </div>
 
         </div>
     );
+}
+
+export function ContactsDrawer() {
+  return(
+    <div className="block md:hidden">
+      <Drawer>
+        <DrawerTrigger><button className="p-2 border flex rounded-md">chats <MoreHorizontal className="ml-1"/></button></DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>select a chat</DrawerTitle>
+            </DrawerHeader>
+            <ListContacts/>
+            <DrawerClose className="my-2">
+              <Button>Ok</Button>
+            </DrawerClose>
+          </DrawerContent>
+      </Drawer>
+    </div>
+  )
 }

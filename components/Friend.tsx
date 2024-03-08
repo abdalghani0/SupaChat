@@ -10,9 +10,10 @@ import { useMessage } from '@/lib/store/messages';
 function Friend({ room, index } : { room : room, index : number }) {
     const {setCurrentRoom, setRoomMessages} = useRooms();
     const {messages} = useMessage();
+    const lastMessage = messages.findLast((message) => (message.room_id === room.id));
     const {users} = useUsers();
     const {user} = useUser();
-    const currentUser = users.find((u) => u?.id === user?.id);
+    const currentUser = users?.find((u) => u?.id === user?.id)
     const user2 = users.find((u) => u?.id === room.user2_id);
     const user1 = users.find((u) => u?.id === room.user1_id);
     let contact;
@@ -30,17 +31,25 @@ function Friend({ room, index } : { room : room, index : number }) {
         <Suspense fallback={friendSkeleton()}>
             <div 
                 className={index === 0 
-                ? "flex justify-between items-center cursor-pointer hover:bg-gray-600 py-3 px-2 rounded-md border-y" 
-                : "flex justify-between items-center cursor-pointer hover:bg-gray-600 py-3 px-2 rounded-md border-b" }
+                ? "flex items-center cursor-pointer hover:bg-gray-600 py-3 px-2 rounded-md border-y" 
+                : "flex items-center cursor-pointer hover:bg-gray-600 py-3 px-2 rounded-md border-b" }
                 onClick={() => handleFriendClick()}
                 >
-                    <Image 
-                        src={contact?.avatar_url!} 
-                        alt={contact?.display_name!}
-                        width={40}
-                        height={40}
-                        className="rounded-full ring-2 mr-5"/>
-                <p className="text-sm">{contact?.display_name}</p>
+                <Image 
+                    src={contact?.avatar_url!} 
+                    alt={contact?.display_name!}
+                    width={40}
+                    height={40}
+                    className="rounded-full ring-2 mr-5"/>
+                <div>
+                    <p className="text-sm">{contact?.display_name}</p>
+                    <p className="text-xs text-gray-400">
+                        {lastMessage?.text.length! >= 15 
+                            ? (lastMessage?.text.slice(0, 14) + "...") 
+                            : lastMessage?.text}
+                    </p>
+                </div>
+                
             </div>
         </Suspense>
     );
