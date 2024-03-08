@@ -21,7 +21,9 @@ export default async function Page() {
           ? <div className="max-w-60 hidden md:flex flex-col overflow-auto h-full border rounded-md">
               <Contacts userId={data.session?.user.id}/>
             </div>
-        : null
+          : <div className="max-w-60 hidden md:flex flex-col overflow-auto h-full border rounded-md">
+          <Contacts userId={data.session?.user.id}/>
+        </div>
         }
         
 
@@ -30,7 +32,6 @@ export default async function Page() {
           <ChatHeader user={data.session?.user} />
           
           {data.session?.user 
-           
             ?   <>
                   <ChatMessages userRooms={userRooms.data?.rooms as string[]}/>
                   <ChatInput/>

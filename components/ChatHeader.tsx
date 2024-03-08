@@ -84,7 +84,7 @@ export function ContactsDrawer() {
   return(
     <div className="block md:hidden">
       <Drawer>
-        <DrawerTrigger><button className="p-2 border flex rounded-md">chats <MoreHorizontal className="ml-1"/></button></DrawerTrigger>
+        <DrawerTrigger><div className="p-2 cursor-pointer border flex rounded-md">chats <MoreHorizontal className="ml-1"/></div></DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
               <DrawerTitle>select a chat</DrawerTitle>
