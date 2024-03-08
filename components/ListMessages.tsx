@@ -120,7 +120,7 @@ export default function ListMessages() {
               </div>
             : <div className="m-auto text-2xl space-y-2">
                 <Image 
-                  src="/public/chat.jpg"
+                  src="/chat.jpg"
                   alt="chatting icon"
                   width={80}
                   height={80}
