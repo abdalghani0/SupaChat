@@ -32,7 +32,7 @@ export default function ListMessages() {
         async(payload) => {
           //checking if the message is not sent by the currentUser and if the message belongs to any of the user's rooms
           // to avoid adding unrelated messages to the messages state
-          if( (!optimisticId.includes(payload.new.id)) && (currentUser?.rooms.includes(payload.new.room_id)) ) {
+          if(!optimisticId.includes(payload.new.id)) {
             console.log(payload);
             const {error,data} = await supabase.from("users").select(".").eq("id", payload.new.send_by).single();
             if(error) {

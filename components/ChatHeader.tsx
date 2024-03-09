@@ -91,7 +91,7 @@ export function ContactsDrawer() {
             </DrawerHeader>
             <ListContacts/>
             <DrawerClose className="my-2">
-              <Button>Ok</Button>
+              <Button id="close-drawer">Ok</Button>
             </DrawerClose>
           </DrawerContent>
       </Drawer>

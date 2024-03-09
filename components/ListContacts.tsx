@@ -15,7 +15,7 @@ import { room, useRooms } from "@/lib/store/rooms";
 function ListContacts() {
     const {users} = useUsers();
     const {user} = useUser();
-    const currentUser = users.find((u) => (u?.id === user?.id));
+    const currentUser = users?.find((u) => (u?.id === user?.id));
     const {rooms, addRoom} = useRooms();
     const supabase = supabaseBrowser();
 

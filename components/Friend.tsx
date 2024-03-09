@@ -25,6 +25,7 @@ function Friend({ room, index } : { room : room, index : number }) {
     const handleFriendClick = () => {
         setCurrentRoom(room);
         setRoomMessages(messages.filter((message) => (message.room_id === room.id)));
+        document.getElementById("close-drawer")?.click();
     }
 
     return (
