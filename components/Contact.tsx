@@ -24,6 +24,7 @@ function Contact({user} : {user:IUser}) {
         }
         const roomExists = rooms.find((room) => ((room.user1_id === newRoom.user1_id && room.user2_id === newRoom.user2_id) || (room.user1_id === newRoom.user1_id && room.user2_id === newRoom.user2_id)));
         if(!roomExists) {
+            addRoom(newRoom);
             const {error} = await supabase.from("rooms").insert(newRoom);
             const user1Update = await supabase.from("users").update({rooms: [...user1Rooms, newRoom.id]}).eq("id", user1?.id!);
             const user2Update = await supabase.from("users").update({rooms: [...user2Rooms, newRoom.id]}).eq("id", user?.id!);
@@ -36,7 +37,6 @@ function Contact({user} : {user:IUser}) {
                 }
                 return usr;
             }));
-            addRoom(newRoom);
             if(error) {
                 toast.error(error.message);
             }

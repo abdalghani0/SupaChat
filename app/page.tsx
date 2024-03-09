@@ -31,7 +31,7 @@ export default async function Page() {
           
           {data.session?.user 
             ?   <>
-                  <ChatMessages userRooms={userRooms.data?.rooms as string[]}/>
+                  <ChatMessages userRooms={userRooms.data?.rooms!}/>
                   <ChatInput/>
                 </>
             : <ChatAbout/>

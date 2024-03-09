@@ -9,11 +9,14 @@ import { ArrowDown } from 'lucide-react';
 import { useUser } from '@/lib/store/user';
 import { useRooms } from '@/lib/store/rooms';
 import Image from 'next/image';
+import { useUsers } from '@/lib/store/users';
 
 export default function ListMessages() {
   const scrollRef = useRef() as  React.MutableRefObject<HTMLDivElement>;
   const {messages, addMessage, optimisticId, optimisticDeleteMessage, optimisticUpdateMessage} = useMessage((state) => state);
   const user = useUser((state) => state.user);
+  const {users} = useUsers();
+  const currentUser = users.find((u) => (u?.id === user?.id))
   const {currentRoom, addMessageToRoom, currentRoomMessages} = useRooms();
   const supabase = supabaseBrowser();
   const [userScrolled, setUserScrolled] = useState(false);
@@ -27,7 +30,9 @@ export default function ListMessages() {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
         async(payload) => {
-          if(!optimisticId.includes(payload.new.id)) {
+          //checking if the message is not sent by the currentUser and if the message belongs to any of the user's rooms
+          // to avoid adding unrelated messages to the messages state
+          if( (!optimisticId.includes(payload.new.id)) && (currentUser?.rooms.includes(payload.new.room_id)) ) {
             console.log(payload);
             const {error,data} = await supabase.from("users").select(".").eq("id", payload.new.send_by).single();
             if(error) {

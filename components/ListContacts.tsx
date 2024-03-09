@@ -7,9 +7,39 @@ import {
 import Contact from "./Contact";
 import { useUsers } from "@/lib/store/users";
 import ListFriends from "./ListFriends";
+import { useEffect } from "react";
+import { supabaseBrowser } from "@/lib/supabase/browser";
+import { useUser } from "@/lib/store/user";
+import { room, useRooms } from "@/lib/store/rooms";
 
 function ListContacts() {
     const {users} = useUsers();
+    const {user} = useUser();
+    const currentUser = users.find((u) => (u?.id === user?.id));
+    const {rooms, addRoom} = useRooms();
+    const supabase = supabaseBrowser();
+
+    useEffect(() => { 
+        //real time insert listener for rooms from all contacts
+        const channel = supabase
+          .channel("chat-room")
+          .on(
+            'postgres_changes',
+            { event: 'INSERT', schema: 'public', table: 'rooms' },
+            async(payload) => {
+              if(!currentUser?.rooms.includes(payload.new.id) && currentUser?.id === payload.new.user2_id) {
+                console.log(payload);
+                addRoom(payload.new as room);
+              }
+            }
+          )
+          .subscribe()
+    
+        return() => {
+          channel.unsubscribe();
+        }
+      },[rooms])
+    
 
     return (
         <>
