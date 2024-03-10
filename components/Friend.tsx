@@ -26,6 +26,7 @@ function Friend({ room, index } : { room : room, index : number }) {
         setCurrentRoom(room);
         setRoomMessages(messages.filter((message) => (message.room_id === room.id)));
         document.getElementById("close-drawer")?.click();
+        document.getElementById("arrow-down")?.click();
     }
 
     return (
