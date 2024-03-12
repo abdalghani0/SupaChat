@@ -15,8 +15,6 @@ export default function ListMessages() {
   const scrollRef = useRef() as  React.MutableRefObject<HTMLDivElement>;
   const {messages, addMessage, optimisticId, optimisticDeleteMessage, optimisticUpdateMessage} = useMessage((state) => state);
   const user = useUser((state) => state.user);
-  const {users} = useUsers();
-  const currentUser = users.find((u) => (u?.id === user?.id))
   const {currentRoom, addMessageToRoom, currentRoomMessages} = useRooms();
   const supabase = supabaseBrowser();
   const [userScrolled, setUserScrolled] = useState(false);

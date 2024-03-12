@@ -1,9 +1,4 @@
 "use client"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-  } from "@/components/ui/popover";
 import Contact from "./Contact";
 import { useUsers } from "@/lib/store/users";
 import ListFriends from "./ListFriends";
@@ -59,8 +54,8 @@ function ListContacts() {
                   <DropdownMenuSeparator />
                   {users?.map((value, index) => {
                     return(
-                      <DropdownMenuItem>
-                        <Contact key={index} user={value}/>
+                      <DropdownMenuItem key={index}>
+                        <Contact user={value}/>
                       </DropdownMenuItem>
                     );
                   })}
