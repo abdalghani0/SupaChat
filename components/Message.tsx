@@ -13,16 +13,24 @@ import { CornerUpLeft, MoreHorizontal } from 'lucide-react';
 import { useUser } from '@/lib/store/user';
 import { User } from '@supabase/supabase-js';
 import ReplyToMessage from './ReplyToMessage';
+import { useState } from 'react';
 
 export default function Message({message} : {message: Imessage}) {
     const user = useUser((state) => state.user);
     const {messages} = useMessage();
-    const replyToMessage = messages.find((m) => (m.id === message.replying_to));
+    const replyToMessage = message.replying_to ? messages?.find((m) => (m.id === message.replying_to)) : undefined;
     const {setReplyToMessage} = useMessage();
 
+    const handleRepliedMessageClick = () => {
+        document.getElementById(replyToMessage?.id!)?.classList.add("bg-gray-700"); 
+        setTimeout(() => {
+            document.getElementById(replyToMessage?.id!)?.classList.remove("bg-gray-700"); 
+        }, 500);
+    }
+
     return (
-        <div id={message.id} onDoubleClick={() => setReplyToMessage(message)} className={`${message.send_by === user?.id ? "" : "flex justify-end"}`}>
-            <div className={`flex gap-2 w-fit bg-gradient-to-r from-pink-700 to-purple-700 rounded-md p-3 ${message.send_by === user?.id ? "bg-gradient-to-l mr-10" : "flex-row-reverse ml-10"}`}>
+        <div id={message.id} onDoubleClick={() => setReplyToMessage(message)} className={`rounded-md transision-bg duration-500 ${message.send_by === user?.id ? "" : "flex justify-end"}`}>
+            <div className={`flex gap-2 w-fit max-w-md bg-gradient-to-r from-pink-700 to-purple-700 rounded-md p-3 ${message.send_by === user?.id ? "bg-gradient-to-l" : "flex-row-reverse"}`}>
                 <div className="shrink-0">
                     <Image 
                         src={message.users?.avatar_url!} 
@@ -43,7 +51,7 @@ export default function Message({message} : {message: Imessage}) {
                     </div>
 
                     {message.replying_to
-                        ?   <a href={`#${replyToMessage?.id}`}><ReplyToMessage message={replyToMessage} style={`cursor-pointer bg-gradient-to-r from-pink-900 to-purple-900 ${message.send_by === user?.id ? "bg-gradient-to-l mr-10" : ""}`} /></a>
+                        ?   <a onClick={() => handleRepliedMessageClick()} href={`#${replyToMessage?.id}`}><ReplyToMessage message={replyToMessage} style={`cursor-pointer bg-gradient-to-r from-pink-900 to-purple-900 ${message.send_by === user?.id ? "bg-gradient-to-l mr-10" : ""}`} /></a>
                         :   null   
                     }
 

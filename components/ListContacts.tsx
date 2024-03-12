@@ -11,6 +11,14 @@ import { useEffect } from "react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { useUser } from "@/lib/store/user";
 import { room, useRooms } from "@/lib/store/rooms";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 function ListContacts() {
     const {users} = useUsers();
@@ -44,16 +52,20 @@ function ListContacts() {
     return (
         <>
             <div className="my-2">
-                <Popover>
-                    <PopoverTrigger className="w-full"><div className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">Add contacts</div></PopoverTrigger>
-                    <PopoverContent>
-                                {users?.map((value, index) => {
-                                    return(
-                                        <Contact key={index} user={value}/>
-                                    );
-                                })}
-                    </PopoverContent>
-                </Popover>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="w-full border-0 ring-0 outline-0"><div className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">Add contacts</div></DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>contacts</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {users?.map((value, index) => {
+                    return(
+                      <DropdownMenuItem>
+                        <Contact key={index} user={value}/>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             
             <div className="flex flex-col">

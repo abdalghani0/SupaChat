@@ -58,7 +58,7 @@ function ChatInput() {
     return (
         <div className="p-5">
             {replyToMessage 
-                ?   <div className={`bg-gray-800 rounded-sm flex items-center transition-transform duration-300 ${replyMessageAppeard ? "translate-y-0" : "translate-y-6"}`}>
+                ?   <div className={`bg-gray-800 mb-1 rounded-sm flex items-center transition-transform duration-300 ${replyMessageAppeard ? "translate-y-0" : "translate-y-6"}`}>
                         <ReplyToMessage message={replyToMessage} style="flex-1"/>
                         <svg onClick={() => {setReplyMessageAppeard(false); setReplyToMessage(undefined)}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" className="cursor-pointer mr-3 lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
                     </div>

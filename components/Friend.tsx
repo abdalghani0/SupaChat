@@ -8,9 +8,9 @@ import { room, useRooms } from '@/lib/store/rooms';
 import { useMessage } from '@/lib/store/messages';
 
 function Friend({ room, index } : { room : room, index : number }) {
-    const {setCurrentRoom, setRoomMessages} = useRooms();
+    const {setCurrentRoom, setRoomMessages, currentRoom} = useRooms();
     const {messages} = useMessage();
-    const lastMessage = messages.findLast((message) => (message.room_id === room.id));
+    const lastMessage = messages?.findLast((message) => (message.room_id === room.id));
     const {users} = useUsers();
     const {user} = useUser();
     const currentUser = users?.find((u) => u?.id === user?.id)
@@ -24,17 +24,15 @@ function Friend({ room, index } : { room : room, index : number }) {
 
     const handleFriendClick = () => {
         setCurrentRoom(room);
-        setRoomMessages(messages.filter((message) => (message.room_id === room.id)));
+        setRoomMessages(messages?.filter((message) => (message.room_id === room.id)));
         document.getElementById("close-drawer")?.click();
         document.getElementById("arrow-down")?.click();
     }
-
+    
     return (
         <Suspense fallback={friendSkeleton()}>
             <div 
-                className={index === 0 
-                ? "flex items-center cursor-pointer hover:bg-gray-600 py-3 px-2 rounded-md border-y" 
-                : "flex items-center cursor-pointer hover:bg-gray-600 py-3 px-2 rounded-md border-b" }
+                className={`flex items-center cursor-pointer hover:bg-gray-700 py-3 px-2 rounded-md ${room.id === currentRoom?.id ? `bg-gray-800` : ``} ${index === 0 ? `border-y` : `border-b`}`}
                 onClick={() => handleFriendClick()}
                 >
                 <Image 
