@@ -13,7 +13,6 @@ import { CornerUpLeft, MoreHorizontal } from 'lucide-react';
 import { useUser } from '@/lib/store/user';
 import { User } from '@supabase/supabase-js';
 import ReplyToMessage from './ReplyToMessage';
-import { useState } from 'react';
 
 export default function Message({message} : {message: Imessage}) {
     const user = useUser((state) => state.user);
