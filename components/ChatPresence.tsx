@@ -1,13 +1,16 @@
 "use client"
+import { useRooms } from '@/lib/store/rooms';
 import { useUser } from '@/lib/store/user';
 import { supabaseBrowser } from '@/lib/supabase/browser';
-import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 function ChatPresence() {
     const user = useUser((state) => state.user);
+    const {currentRoom} = useRooms();
+    const friend = user?.id === currentRoom?.user1_id ? currentRoom?.user2_id : currentRoom?.user1_id;
     const supabase = supabaseBrowser();
-    const [onlineUsers, setOnlineUsers] = useState(0);
+    const [onlineUsers, setOnlineUsers] = useState([]);
+    const [friendOnline, setFriendOnline] = useState(false);
     useEffect(() => {        
         const channel = supabase.channel('room1')
         channel
@@ -18,7 +21,7 @@ function ChatPresence() {
                 // @ts-ignore
                 userIds.push(channel.presenceState()[id][0].user_id)
             }
-            setOnlineUsers([...new Set(userIds)].length);
+            setOnlineUsers([...new Set(userIds)] as []);
         })
         .subscribe(async (status) => {
             if (status === 'SUBSCRIBED') {
@@ -30,6 +33,11 @@ function ChatPresence() {
         })
     }, [user]);
 
+    useEffect(() => {
+        //@ts-ignore
+        setFriendOnline(onlineUsers.includes(friend))
+    }, [currentRoom, onlineUsers])    
+
     if(!user) {
         return <div className="h-3 w-1"></div>
     }
@@ -38,7 +46,7 @@ function ChatPresence() {
 
             <div className="h-4 w-4 bg-green-500 rounded-full animate-pulse"></div>
 
-            <h1 className="text-sm text-gray-400">{onlineUsers} online</h1>
+            <h1 className="text-sm text-gray-400">{friendOnline ? "online" : "offline"}</h1>
 
         </div>
     );

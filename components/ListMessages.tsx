@@ -109,7 +109,7 @@ export default function ListMessages() {
                   </div>
                 
       
-                <div className="flex-col space-y-7">
+                <div className="flex-col scroll-smooth space-y-7">
       
                   {currentRoomMessages.map((value, index) => {
                     return (
@@ -140,7 +140,7 @@ export default function ListMessages() {
             {notification 
               ? (<div className="w-36 mx-auto bg-indigo-500 p-1 rounded-md cursor-pointer" onClick={scrollDown}><h1>New {notification} messages</h1></div>)
               : (<div className="w-10 h-10 bg-blue-500 rounded-full justify-center items-center flex mx-auto border cursor-pointer hover:scale-110 transision-all">
-                  <button id="arrow-down" onClick={() => scrollDown()} ><ArrowDown /></button>
+                  <button className="border-0" id="arrow-down" onClick={() => scrollDown()} ><ArrowDown /></button>
                 </div>)
             }
           </div>

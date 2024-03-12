@@ -27,7 +27,13 @@ function Contact({user} : {user:IUser}) {
             addRoom(newRoom);
             const {error} = await supabase.from("rooms").insert(newRoom);
             const user1Update = await supabase.from("users").update({rooms: [...user1Rooms, newRoom.id]}).eq("id", user1?.id!);
-            const user2Update = await supabase.from("users").update({rooms: [...user2Rooms, newRoom.id]}).eq("id", user?.id!);
+            let user2Update;
+            //check if the other two users are identical to avoid duplicatoin when the user adds himself as a friend
+            if(newRoom.user1_id !== newRoom.user2_id) {
+                const update = await supabase.from("users").update({rooms: [...user2Rooms, newRoom.id]}).eq("id", user?.id!);
+                user2Update = update;
+            }
+                
             setUsers(users.filter((usr) => {
                 if(usr?.id === user1?.id) {
                     usr?.rooms.push(newRoom.id);
@@ -40,7 +46,7 @@ function Contact({user} : {user:IUser}) {
             if(error) {
                 toast.error(error.message);
             }
-            if(user1Update.error || user2Update.error) {
+            if(user1Update.error || user2Update?.error) {
                 toast.error("Error while creating contact")
             }
         }
