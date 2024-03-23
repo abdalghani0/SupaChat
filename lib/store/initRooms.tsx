@@ -7,7 +7,6 @@ function InitRooms({rooms} : { rooms: room[]}) {
     const initState = useRef(false);
     const { currentRoomMessages } = useRooms();
     const hasMore = currentRoomMessages.length >= LIMIT_MESSAGE;
-    console.log("length" + currentRoomMessages.length)
 
     useEffect(() => {
         if(!initState.current) {

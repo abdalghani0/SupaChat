@@ -12,17 +12,14 @@ import ReplyToMessage from './ReplyToMessage';
 function ChatInput() {
     const user = useUser((state) => state.user);
     const {currentRoom, addMessageToRoom} = useRooms();
-    const {replyToMessage, setReplyToMessage} = useMessage();
-    const addMessage = useMessage((state) => state.addMessage);
+    const {replyToMessage, setReplyToMessage, addMessage} = useMessage();
     const setOptimisticId = useMessage((state) => state.setOptimisticId);
-    const supabase = supabaseBrowser();
-    const [replyMessageAppeard, setReplyMessageAppeard] = useState(true);
-
-    useEffect(() => {
-        setReplyMessageAppeard(true);
-    },[replyToMessage])
 
     const handleSendMessage = async(text : string) => {
+        const supabase = supabaseBrowser();
+        if(!currentRoom) {
+            toast.warning("Select a friend to send a message");
+        }
         if(text.trim() && currentRoom) {
             setReplyToMessage(undefined);
             const newMessage = {
@@ -47,29 +44,104 @@ function ChatInput() {
             if(error) {
                 toast.error(error.message);
             }
+            else   
+                console.log("message sent");
         }
         else {
             toast.error("Message can not be empty");
         }
-        if(!currentRoom) {
-            toast.error("Select a friend to send a message");
+    }
+    /*
+    useEffect(() => {
+        const channel = supabase
+        .channel("chat-room")
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms' }, 
+            payload => {
+            console.log(payload);
+            if(payload.new.user1_id === user?.id){
+                setUser2IsTyping(payload.new.user2_is_typing);
+            }
+            else if(payload.new.user2_id === user?.id){
+                setUser1IsTyping(payload.new.user1_is_typing);
+            }
+            }
+        )
+        .subscribe()
+    
+        return() => {
+            channel.unsubscribe();
+        }
+    }, [user1IsTyping, user2IsTyping])
+
+    const handleTyping = async () => {
+        const supabase = supabaseBrowser();
+        if(currentRoom?.user1_id === user?.id && currentRoom) {
+            const {error} = await supabase.from("rooms").update({user1_is_typing: true}).eq("id", currentRoom?.id!);
+            if(error) {
+                toast.error(error.message);
+            }
+            else
+                setUser1IsTyping(true);
+        }
+        else if(currentRoom?.user2_id === user?.id && currentRoom) {
+            const {error} = await supabase.from("rooms").update({user2_is_typing: true}).eq("id", currentRoom?.id!);
+            if(error) {
+                toast.error(error.message);
+            }
+            else
+                setUser2IsTyping(true);
         }
     }
+
+    const debouncedTyping = debounce(handleTyping, 2500, {immediate: true});
+    const typingHandler = useCallback(debouncedTyping,[user1IsTyping, user2IsTyping]);
+
+    const handleStopedTyping = async() => {
+        const supabase = supabaseBrowser();
+            if(currentRoom?.user1_id === user?.id && currentRoom) {
+                const {error} = await supabase.from("rooms").update({user1_is_typing: false}).eq("id", currentRoom?.id!);
+                if(error) {
+                    toast.error(error.message);
+                }
+                else
+                    setUser1IsTyping(false);
+            }
+            else if(currentRoom?.user2_id === user?.id && currentRoom) {
+                const {error} = await supabase.from("rooms").update({user2_is_typing: false}).eq("id", currentRoom?.id!);
+                if(error) {
+                    toast.error(error.message);
+                }
+                else
+                    setUser2IsTyping(false);
+            }
+    }
+
+    const debouncedStoped = debounce(handleStopedTyping, 2500);
+    const stopedTypingHandler = useCallback(debouncedStoped, [user1IsTyping, user2IsTyping]);
+
+    */
+
     return (
         <div className="p-5">
             {replyToMessage 
-                ?   <div className={`bg-gray-800 mb-1 rounded-sm flex items-center transition-transform duration-300 ${replyMessageAppeard ? "translate-y-0" : "translate-y-6"}`}>
+                ?   <div className={`bg-gray-800 mb-1 rounded-sm flex items-center`}>
                         <ReplyToMessage message={replyToMessage} style="flex-1"/>
-                        <svg onClick={() => {setReplyMessageAppeard(false); setReplyToMessage(undefined)}} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" className="cursor-pointer mr-3 lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                        <svg onClick={() => setReplyToMessage(undefined)} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" className="cursor-pointer mr-3 lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
                     </div>
                 :   null 
             }
-            <Input dir="auto" placeholder="send message" onKeyDown={(e) => {
-                if(e.key === "Enter") {
-                    handleSendMessage(e.currentTarget.value);
-                    e.currentTarget.value = "";
-                }
-            }}/>
+            <Input 
+                id="chat-input"
+                dir="auto"
+                placeholder="send message"
+                onKeyDown={(e) => {
+                    if(e.key === "Enter") {
+                        handleSendMessage(e.currentTarget.value);
+                        e.currentTarget.value = "";
+                    }
+                }}
+                
+            />
         </div>
     );
 }

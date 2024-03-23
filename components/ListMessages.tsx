@@ -9,13 +9,12 @@ import { ArrowDown } from 'lucide-react';
 import { useUser } from '@/lib/store/user';
 import { useRooms } from '@/lib/store/rooms';
 import Image from 'next/image';
-import { useUsers } from '@/lib/store/users';
 
 export default function ListMessages() {
   const scrollRef = useRef() as  React.MutableRefObject<HTMLDivElement>;
   const {messages, addMessage, optimisticId, optimisticDeleteMessage, optimisticUpdateMessage} = useMessage((state) => state);
   const user = useUser((state) => state.user);
-  const {currentRoom, addMessageToRoom, currentRoomMessages} = useRooms();
+  const {currentRoom, addMessageToRoom, currentRoomMessages, deleteMessageFromRoom, updateMessageInRoom, setUser1IsTyping, setUser2IsTyping, user1IsTyping, user2IsTyping} = useRooms();
   const supabase = supabaseBrowser();
   const [userScrolled, setUserScrolled] = useState(false);
   const [notification, setNotification] = useState(0);
@@ -55,11 +54,13 @@ export default function ListMessages() {
       )
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, payload => {
         console.log('Change received!', payload);
-        optimisticUpdateMessage(payload.new as Imessage)
+        optimisticUpdateMessage(payload.new as Imessage);
+        updateMessageInRoom(payload.new as Imessage);
       })
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'messages' }, payload => {
         console.log('Change received!', payload)
         optimisticDeleteMessage(payload.old.id);
+        deleteMessageFromRoom(payload.old.id);
       })
       .subscribe()
 

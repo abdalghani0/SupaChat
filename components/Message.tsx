@@ -20,6 +20,7 @@ export default function Message({message} : {message: Imessage}) {
     const replyToMessage = message.replying_to ? messages?.find((m) => (m.id === message.replying_to)) : undefined;
     const {setReplyToMessage} = useMessage();
 
+    //highlights the replied to message
     const handleRepliedMessageClick = () => {
         document.getElementById(replyToMessage?.id!)?.classList.add("bg-gray-700"); 
         setTimeout(() => {
@@ -27,8 +28,13 @@ export default function Message({message} : {message: Imessage}) {
         }, 500);
     }
 
+    const handleDoubleClick = () => {
+        setReplyToMessage(message);
+        document.getElementById("chat-input")?.focus();
+    }
+
     return (
-        <div id={message.id} onDoubleClick={() => setReplyToMessage(message)} className={`rounded-md transision-bg duration-500 ${message.send_by === user?.id ? "" : "flex justify-end"}`}>
+        <div id={message.id} onDoubleClick={() => handleDoubleClick()} className={`rounded-md transision-bg duration-500 ${message.send_by === user?.id ? "" : "flex justify-end"}`}>
             <div className={`flex gap-2 w-fit max-w-md bg-gradient-to-r from-pink-700 to-purple-700 rounded-md p-3 ${message.send_by === user?.id ? "bg-gradient-to-l" : "flex-row-reverse"}`}>
                 <div className="shrink-0">
                     <Image 

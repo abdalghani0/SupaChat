@@ -15,7 +15,7 @@ export default async function Page() {
 
   return (
     <>
-      <div className="max-w-4xl mx-auto md:py-10 h-screen flex gap-5">
+      <div className="max-w-4xl mx-auto md:py-10 h-dvh flex gap-5">
 
         {data.session?.user.id
           ? <div className="max-w-60 hidden md:flex flex-col overflow-auto h-full border rounded-md">

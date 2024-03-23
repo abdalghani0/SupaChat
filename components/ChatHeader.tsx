@@ -14,26 +14,23 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
-import Contacts from './Contacts';
+} from "@/components/ui/drawer";
 import ListContacts from './ListContacts';
 import { MoreHorizontal } from 'lucide-react';
 
-
 export default function ChatHeader({ user } : { user: User | undefined}) {
-
     const router = useRouter();
     const {currentRoom} = useRooms();
     const {users} = useUsers();
     const user2 = users.find((u) => (u?.id === currentRoom?.user2_id));
     const currentUser = users.find((u) => (u?.id === currentRoom?.user1_id));
-    const roomName = 
-      user?.id === currentRoom?.user1_id 
-        ? user2?.display_name 
-        : currentUser?.display_name;
+    const roomName = user?.id === currentRoom?.user1_id 
+      ? user2?.display_name 
+      : currentUser?.display_name;
+    const supabase = supabaseBrowser();
+    // const isTyping = user?.id === currentRoom?.user1_id ? user2IsTyping : user1IsTyping;
 
     const handleLoginWithGithub = () => {
-        const supabase = supabaseBrowser();
         supabase.auth.signInWithOAuth({
             provider: "github",
             options: {
@@ -43,7 +40,6 @@ export default function ChatHeader({ user } : { user: User | undefined}) {
     };
 
     const handleLogout = async() => {
-        const supabase = supabaseBrowser();
         await supabase.auth.signOut();
         router.refresh();
     };
@@ -59,13 +55,19 @@ export default function ChatHeader({ user } : { user: User | undefined}) {
 
               <ChatPresence/>
 
+              {/* isTyping &&
+                 <div className="flex gap-1 text-sm items-center">
+                    <span>typing</span>
+                    <span className="w-1 h-1 rounded-full bg-violet-500 animate-ping"></span>
+                    <span className="w-1 h-1  rounded-full bg-violet-500 animate-ping delay-75"></span>
+                    <span className="w-1 h-1  rounded-full bg-violet-500 animate-ping delay-100"></span>
+                  </div>  
+              */}
+
             </div>
             
             <div className="flex gap-3">
-              {user 
-                ? <ContactsDrawer />
-                : null
-              }
+              {user && <ContactsDrawer />}
               
 
               {user ? <Button onClick={handleLogout}>logout</Button>

@@ -69,6 +69,7 @@ import { useRooms } from "@/lib/store/rooms";
   
   export function EditAlert() {
     const actionMessage = useMessage((state) => state.actionMessage);
+    const {updateMessageInRoom} = useRooms();
     const inputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
     const optimisticUpdateMessage = useMessage((state) => state.optimisticUpdateMessage);
     const handleEditMessage = async() => {
@@ -79,7 +80,12 @@ import { useRooms } from "@/lib/store/rooms";
               ...actionMessage,
               text,
               is_edit: true,
-            } as Imessage)
+            } as Imessage);
+            updateMessageInRoom({
+              ...actionMessage,
+              text,
+              is_edit: true,
+            } as Imessage);
             const {error} = await supabase.from("messages").update({text, is_edit:true}).eq("id", actionMessage?.id!);
             if(error) {
                 toast.error(error.message)

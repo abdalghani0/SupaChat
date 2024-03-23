@@ -8,14 +8,14 @@ import { room, useRooms } from '@/lib/store/rooms';
 import { useMessage } from '@/lib/store/messages';
 
 function Friend({ room, index } : { room : room, index : number }) {
-    const {setCurrentRoom, setRoomMessages, currentRoom} = useRooms();
+    const {setCurrentRoom, setRoomMessages, currentRoom, setIsTyping} = useRooms();
     const {messages} = useMessage();
     const lastMessage = messages?.findLast((message) => (message.room_id === room.id));
     const {users} = useUsers();
     const {user} = useUser();
     const currentUser = users?.find((u) => u?.id === user?.id)
-    const user2 = users.find((u) => u?.id === room.user2_id);
-    const user1 = users.find((u) => u?.id === room.user1_id);
+    const user2 = users?.find((u) => u?.id === room.user2_id);
+    const user1 = users?.find((u) => u?.id === room.user1_id);
     let contact;
     if(currentUser === user2) 
         contact = user1;
@@ -25,6 +25,7 @@ function Friend({ room, index } : { room : room, index : number }) {
     const handleFriendClick = () => {
         setCurrentRoom(room);
         setRoomMessages(messages?.filter((message) => (message.room_id === room.id)));
+        setIsTyping(false);
         document.getElementById("close-drawer")?.click();
         document.getElementById("arrow-down")?.click();
     }
