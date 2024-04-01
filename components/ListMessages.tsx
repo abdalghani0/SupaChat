@@ -135,7 +135,7 @@ export default function ListMessages() {
         
 
         {userScrolled && 
-          <div className="absolute bottom-20 w-full">
+          <div className="absolute bottom-20 flex-col self-center">
             {notification 
               ? (<div className="w-36 mx-auto bg-indigo-500 p-1 rounded-md cursor-pointer" onClick={scrollDown}><h1>New {notification} messages</h1></div>)
               : (<div className="w-10 h-10 bg-blue-500 rounded-full justify-center items-center flex mx-auto border cursor-pointer hover:scale-110 transision-all">

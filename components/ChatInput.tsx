@@ -8,6 +8,7 @@ import { useUser } from '@/lib/store/user';
 import { Imessage, useMessage } from '@/lib/store/messages';
 import { useRooms } from '@/lib/store/rooms';
 import ReplyToMessage from './ReplyToMessage';
+import { Transition } from '@headlessui/react';
 
 function ChatInput() {
     const user = useUser((state) => state.user);
@@ -122,14 +123,21 @@ function ChatInput() {
     */
 
     return (
-        <div className="p-5">
-            {replyToMessage 
-                ?   <div className={`bg-gray-800 mb-1 rounded-sm flex items-center`}>
-                        <ReplyToMessage message={replyToMessage} style="flex-1"/>
-                        <svg onClick={() => setReplyToMessage(undefined)} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" className="cursor-pointer mr-3 lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
-                    </div>
-                :   null 
-            }
+        <div className="px-5 py-3">
+            <Transition
+                show={replyToMessage? true : false}
+                enter="transition-transform duration-100"
+                enterFrom="translate-y-10"
+                enterTo="translate-y-0"
+                leave="transition-transform duration-75"
+                leaveFrom="translate-y-0"
+                leaveTo="translate-y-5"
+            >
+                <div className={`bg-gray-800 mb-1 rounded-sm flex items-center`}>
+                    <ReplyToMessage message={replyToMessage} style="flex-1"/>
+                    <svg onClick={() => setReplyToMessage(undefined)} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" className="cursor-pointer mr-3 lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                </div>
+            </Transition> 
             <Input 
                 id="chat-input"
                 dir="auto"
@@ -140,7 +148,6 @@ function ChatInput() {
                         e.currentTarget.value = "";
                     }
                 }}
-                
             />
         </div>
     );
