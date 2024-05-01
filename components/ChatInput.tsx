@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Input } from './ui/input';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { toast } from "sonner"

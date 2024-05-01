@@ -7,7 +7,7 @@ function ListFriends() {
     const { rooms } = useRooms();
 
     return (
-        <div>
+        <div className="overflow-y-auto">
             {rooms.map((room, index) => (
                 <Friend key={index} room={room} index={index} />
             ))}
