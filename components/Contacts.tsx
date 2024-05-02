@@ -24,9 +24,9 @@ export default async function Contacts({userId} : {userId : string | undefined})
 
     return (
         <>
-            <ListContacts/>
             <InitUsers users={users}/>
             <InitRooms rooms={fetchedRooms.data!}/>
+            <ListContacts />
         </>
     );
 }
