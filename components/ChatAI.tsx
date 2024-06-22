@@ -159,7 +159,7 @@ function ChatAI() {
         </div>
       )}
 
-      <div className="px-5 py-3">
+      <div className="px-5 max-sm:px-3 py-3">
         <Transition
           show={replyToMessage ? true : false}
           enter="transition-transform duration-100"
