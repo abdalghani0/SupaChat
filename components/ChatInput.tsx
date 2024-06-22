@@ -9,19 +9,23 @@ import { Imessage, useMessage } from '@/lib/store/messages';
 import { useRooms } from '@/lib/store/rooms';
 import ReplyToMessage from './ReplyToMessage';
 import { Transition } from '@headlessui/react';
+import { HfInference } from '@huggingface/inference';
+import { useUsers } from '@/lib/store/users';
 
 function ChatInput() {
     const user = useUser((state) => state.user);
-    const {currentRoom, addMessageToRoom} = useRooms();
-    const {replyToMessage, setReplyToMessage, addMessage} = useMessage();
+    const { users } = useUsers()
+    const { currentRoom, addMessageToRoom } = useRooms();
+    const { replyToMessage, setReplyToMessage, addMessage } = useMessage();
     const setOptimisticId = useMessage((state) => state.setOptimisticId);
+    const user2 = users?.find((u) => u?.id == currentRoom?.user2_id)?.display_name;
 
-    const handleSendMessage = async(text : string) => {
-        const supabase = supabaseBrowser();
-        if(!currentRoom) {
+    const handleSendMessage = async (text: string) => {
+        if (!currentRoom) {
             toast.warning("Select a friend to send a message");
         }
-        if(text.trim() && currentRoom) {
+        if (text.trim() && currentRoom) {
+            const supabase = supabaseBrowser();
             setReplyToMessage(undefined);
             const newMessage = {
                 id: uuidv4(),
@@ -41,17 +45,84 @@ function ChatInput() {
             addMessage(newMessage as Imessage);
             addMessageToRoom(newMessage as Imessage);
             setOptimisticId(newMessage.id);
-            const {error} = await supabase.from("messages").insert({ id: newMessage.id, text, room_id:newMessage.room_id, replying_to:newMessage.replying_to });
-            if(error) {
+            const { error } = await supabase.from("messages").insert({ id: newMessage.id, text, room_id: newMessage.room_id, replying_to: newMessage.replying_to });
+            if (error) {
                 toast.error(error.message);
             }
-            else   
+            else
                 console.log("message sent");
         }
         else {
             toast.error("Message can not be empty");
         }
     }
+
+    const handleTalkToAi = async (message: string) => {
+        const hf = new HfInference("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");
+        if (message.trim()) {
+            const supabase = supabaseBrowser();
+            setReplyToMessage(undefined);
+            const newMessage = {
+                id: uuidv4(),
+                text: message,
+                send_by: user?.id,
+                is_edit: false,
+                created_at: new Date().toISOString(),
+                users: {
+                    id: user?.id,
+                    avatar_url: user?.user_metadata.avatar_url,
+                    created_at: new Date().toISOString(),
+                    display_name: user?.user_metadata.user_name,
+                },
+                room_id: currentRoom?.id,
+                replying_to: replyToMessage?.id,
+            };
+            addMessage(newMessage as Imessage);
+            addMessageToRoom(newMessage as Imessage);
+            setOptimisticId(newMessage.id);
+            const { error } = await supabase.from("messages").insert({ id: newMessage.id, text: message, room_id: newMessage.room_id, replying_to: newMessage.replying_to });
+            if (error) {
+                toast.error(error.message);
+            }
+            else
+                console.log("message sent");
+
+            const out = await hf.chatCompletion({
+                model: "mistralai/Mistral-7B-Instruct-v0.2",
+                messages: [{ role: "user", content: message }],
+                max_tokens: 500,
+                temperature: 0.1,
+                seed: 0,
+            });
+
+            const aiMessage = {
+                id: uuidv4(),
+                text: out.choices[0].message.content,
+                send_by: currentRoom?.user2_id,
+                is_edit: false,
+                created_at: new Date().toISOString(),
+                users: {
+                    id: currentRoom?.user2_id,
+                    avatar_url: "/ai.png",
+                    created_at: new Date().toISOString(),
+                    display_name: "Supabase AI",
+                },
+                room_id: currentRoom?.id,
+                replying_to: newMessage.id,
+            };
+            console.log(currentRoom?.user2_id)
+            addMessage(aiMessage as Imessage);
+            addMessageToRoom(aiMessage as Imessage);
+            setOptimisticId(aiMessage.id);
+            const sendAiMessage = await supabase.from("messages").insert({ id: aiMessage.id, send_by: currentRoom?.user2_id, text: aiMessage.text!, room_id: aiMessage.room_id, replying_to: aiMessage.replying_to });
+            if (sendAiMessage.error) {
+                toast.error(sendAiMessage.error.message);
+            }
+            else
+                console.log("message sent");
+        }
+    }
+
     /*
     useEffect(() => {
         const channel = supabase
@@ -123,9 +194,9 @@ function ChatInput() {
     */
 
     return (
-        <div className="px-5 py-3">
+        <div className="px-5 max-sm:px-3 py-3 text-sm">
             <Transition
-                show={replyToMessage? true : false}
+                show={replyToMessage ? true : false}
                 enter="transition-transform duration-100"
                 enterFrom="translate-y-10"
                 enterTo="translate-y-0"
@@ -133,24 +204,49 @@ function ChatInput() {
                 leaveFrom="translate-y-0"
                 leaveTo="translate-y-5"
             >
-                <div className={`bg-gray-800 mb-1 rounded-sm flex items-center`}>
-                    <ReplyToMessage message={replyToMessage} style="flex-1"/>
-                    <svg onClick={() => setReplyToMessage(undefined)} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" className="cursor-pointer mr-3 lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                <div className={`bg-gray-400 text-white dark:bg-gray-800 mb-1 rounded-sm flex items-center`}>
+                    <ReplyToMessage message={replyToMessage} style="flex-1 text-white" />
+                    <X />
                 </div>
-            </Transition> 
-            <Input 
+            </Transition>
+            <Input
                 id="chat-input"
                 dir="auto"
                 placeholder="send message"
                 onKeyDown={(e) => {
-                    if(e.key === "Enter") {
-                        handleSendMessage(e.currentTarget.value);
+                    if (e.key === "Enter") {
+                        user2 == "Supabase AI"
+                            ? handleTalkToAi(e.currentTarget.value)
+                            : handleSendMessage(e.currentTarget.value)
                         e.currentTarget.value = "";
                     }
                 }}
             />
         </div>
     );
+}
+
+export function X() {
+    const { setReplyToMessage } = useMessage();
+    return (
+        <svg
+            onClick={() => setReplyToMessage(undefined)}
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            className="cursor-pointer mr-3 lucide lucide-circle-x"
+        >
+            <circle cx="12" cy="12" r="10" />
+            <path d="m15 9-6 6" />
+            <path d="m9 9 6 6" />
+        </svg>
+    )
 }
 
 export default ChatInput;

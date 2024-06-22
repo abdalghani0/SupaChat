@@ -17,13 +17,20 @@ export type Imessage = {
     replying_to: string;
 }
 
+export type aiMessage = {
+    send_by: string;
+    text: string;
+}
+
 interface MessageState {
     page: number;
     messages: Imessage[];
+    aiMessages: Imessage[];
     actionMessage: Imessage | undefined;
     optimisticId: string[];
     replyToMessage: Imessage | undefined;
     addMessage: (message: Imessage) => void;
+    addToAiMessages: (message: Imessage) => void;
     setMessages: (messages: Imessage[]) => void;
     setActionMessage: (message: Imessage) => void;
     setReplyToMessage: (message: Imessage | undefined) => void;
@@ -35,11 +42,15 @@ interface MessageState {
 export const useMessage = create<MessageState>()((set) => ({
     page: 1,
     messages: [],
+    aiMessages: [],
     actionMessage: undefined,
     replyToMessage: undefined,
     optimisticId: [],
     addMessage: (newMessage) => set((state) => ({
         messages: [...state.messages, newMessage], 
+    })),
+    addToAiMessages: (newMessage) => set((state) => ({
+        aiMessages: [...state.aiMessages, newMessage], 
     })),
     setMessages: (messages) => set((state) => ({
         messages: [...messages, ...state.messages], 

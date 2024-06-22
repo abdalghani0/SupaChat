@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { User } from "@supabase/supabase-js";
@@ -16,7 +16,10 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import ListContacts from "./ListContacts";
-import { MoreHorizontal, UserRound } from "lucide-react";
+import { UserRound } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Switch } from "./ui/switch";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 export default function ChatHeader({ user }: { user: User | undefined }) {
   const router = useRouter();
@@ -28,6 +31,7 @@ export default function ChatHeader({ user }: { user: User | undefined }) {
     user?.id === currentRoom?.user1_id
       ? user2?.display_name
       : currentUser?.display_name;
+
   const supabase = supabaseBrowser();
   // const isTyping = user?.id === currentRoom?.user1_id ? user2IsTyping : user1IsTyping;
 
@@ -47,7 +51,7 @@ export default function ChatHeader({ user }: { user: User | undefined }) {
 
   return (
     <div className="h-20">
-      <div className="p-5 border-b flex items-center justify-between h-full">
+      <div className="p-5 max-sm:px-3 border-b flex items-center justify-between h-full">
         <div>
           <h1 className="text-xl font-bold">
             {user && currentRoom ? roomName : "SupaChat"}
@@ -65,7 +69,10 @@ export default function ChatHeader({ user }: { user: User | undefined }) {
               */}
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
+     
+          <ThemeSwitcher />
+
           {user && <ContactsDrawer />}
 
           {user ? (
@@ -73,6 +80,7 @@ export default function ChatHeader({ user }: { user: User | undefined }) {
           ) : (
             <Button onClick={handleLoginWithGithub}>login</Button>
           )}
+
         </div>
       </div>
     </div>

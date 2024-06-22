@@ -1,13 +1,12 @@
 "use server";
-import React, { Suspense } from "react";
+import React from "react";
 import ChatHeader from "@/components/ChatHeader";
 import InitUser from "@/lib/store/initUser";
 import ChatInput from "@/components/ChatInput";
 import ChatMessages from "@/components/ChatMessages";
-import ChatAbout from "@/components/ChatAbout";
 import { supabaseServer } from "@/lib/supabase/server";
 import Contacts from "@/components/Contacts";
-import { FriendsSkeleton } from "@/components/ui/skeletons/friendSkeleton";
+import ChatAI from "@/components/ChatAI";
 
 export default async function Page() {
   const supabase = await supabaseServer();
@@ -36,7 +35,7 @@ export default async function Page() {
               <ChatInput />
             </>
           ) : (
-            <ChatAbout />
+            <ChatAI />
           )}
         </div>
       </div>

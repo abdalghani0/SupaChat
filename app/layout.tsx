@@ -27,9 +27,7 @@ export default function RootLayout({
       <body className={space_Grotesk.className}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
           enableSystem
-          disableTransitionOnChange
         >
           {children}
           <Toaster position="top-center" />

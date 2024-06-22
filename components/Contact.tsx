@@ -72,7 +72,7 @@ function Contact({user} : {user:IUser}) {
                 width={25}
                 height={25}
                 className="rounded-full ring-2" />
-            <p>{user?.display_name}</p>
+            <p className="text-xs font-bold">{user?.display_name}</p>
         </div>
     );
 }

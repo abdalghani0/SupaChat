@@ -31,8 +31,8 @@ function Friend({ room, index }: { room: room; index: number }) {
 
   return (
     <div
-      className={`flex items-center cursor-pointer hover:bg-pink-700 py-3 px-2 rounded-md ${
-        room.id === currentRoom?.id ? `bg-pink-700` : ``
+      className={`flex items-center cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 py-3 px-2 rounded-md ${
+        room.id === currentRoom?.id ? `bg-gray-200 dark:bg-gray-700` : ``
       } ${index === 0 ? `border-y` : `border-b`}`}
       onClick={() => handleFriendClick()}
     >
@@ -44,8 +44,8 @@ function Friend({ room, index }: { room: room; index: number }) {
         className="rounded-full ring-2 mr-5"
       />
       <div>
-        <p className="text-sm">{contact?.display_name}</p>
-        <p className="text-xs text-gray-300">
+        <p className="text-sm font-semibold">{contact?.display_name}</p>
+        <p className="text-xs text-gray-600 dark:text-gray-300">
           {lastMessage?.text.length! >= 15
             ? lastMessage?.text.slice(0, 14) + "..."
             : lastMessage?.text}
