@@ -56,8 +56,11 @@ function ChatAI() {
   };
 
   const handleTalkToAi = async (message: string) => {
-    const hf = new HfInference("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");
-    if (message.trim()) {
+    if (aiMessages.at(aiMessages.length - 1)?.send_by === "0") {
+      toast.error("The AI chat Sequence Must Be User, Ai, User, Ai. Delete Your Last Message If It Wasn't Answered By The Ai");
+    }
+    else if (message.trim()) {
+      const hf = new HfInference("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");
       const newMessage = {
         id: uuidv4(),
         text: message,
@@ -76,9 +79,13 @@ function ChatAI() {
       addToAiMessages(newMessage as Imessage);
       setReplyToMessage(undefined);
       try {
+        const messages = [...aiMessages, newMessage];
+
         const out = await hf.chatCompletion({
           model: "mistralai/Mistral-7B-Instruct-v0.2",
-          messages: [{ role: "user", content: message }],
+          messages: messages.map(message => {
+            return { role: message.send_by === "0" ? "user" : "assistant", content: message.text }
+          }),
           max_tokens: 500,
           temperature: 0.1,
           seed: 0,
@@ -104,6 +111,9 @@ function ChatAI() {
         //@ts-ignore
         toast.error(error.message);
       }
+    }
+    else {
+      toast.error("Message can not be empty");
     }
   };
 

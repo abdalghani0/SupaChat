@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "./ui/button";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { User } from "@supabase/supabase-js";
@@ -17,9 +17,8 @@ import {
 } from "@/components/ui/drawer";
 import ListContacts from "./ListContacts";
 import { UserRound } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Switch } from "./ui/switch";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { toast } from "sonner";
 
 export default function ChatHeader({ user }: { user: User | undefined }) {
   const router = useRouter();
@@ -36,6 +35,7 @@ export default function ChatHeader({ user }: { user: User | undefined }) {
   // const isTyping = user?.id === currentRoom?.user1_id ? user2IsTyping : user1IsTyping;
 
   const handleLoginWithGithub = () => {
+
     supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
@@ -45,7 +45,9 @@ export default function ChatHeader({ user }: { user: User | undefined }) {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if(error)
+      toast.error(error.message);
     router.refresh();
   };
 

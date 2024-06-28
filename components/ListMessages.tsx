@@ -10,7 +10,6 @@ import { useUser } from "@/lib/store/user";
 import { useRooms } from "@/lib/store/rooms";
 import Image from "next/image";
 import { useUsers } from "@/lib/store/users";
-import ChatAI from "./ChatAI";
 
 export default function ListMessages() {
   const scrollRef = useRef() as React.MutableRefObject<HTMLDivElement>;
@@ -23,6 +22,7 @@ export default function ListMessages() {
   } = useMessage((state) => state);
   const user = useUser((state) => state.user);
   const { users } = useUsers();
+  const currentUser = users?.find((u) => u?.id == user?.id);
   const {
     currentRoom,
     addMessageToRoom,
@@ -44,7 +44,7 @@ export default function ListMessages() {
         async (payload) => {
           //checking if the message is not sent by the currentUser and if the message belongs to any of the user's rooms
           // to avoid adding unrelated messages to the messages state
-          if (!optimisticId.includes(payload.new.id)) {
+          if (!optimisticId.includes(payload.new.id) && currentUser?.rooms.includes(payload.new.room_id)) {
             console.log(payload);
             const { error, data } = await supabase
               .from("users")
@@ -58,10 +58,10 @@ export default function ListMessages() {
                 ...payload.new,
                 users: data,
               };
-              console.log(newMessage);
               if (payload.new.send_by !== user?.id) {
                 addMessage(newMessage as unknown as Imessage);
-                addMessageToRoom(newMessage as unknown as Imessage);
+                if(currentRoom?.id == payload.new.room_id)
+                  addMessageToRoom(newMessage as unknown as Imessage);
               }
             }
           }
@@ -80,26 +80,32 @@ export default function ListMessages() {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "messages" },
         (payload) => {
-          console.log("Change received!", payload);
-          optimisticUpdateMessage(payload.new as Imessage);
-          updateMessageInRoom(payload.new as Imessage);
+          if (currentUser?.rooms.includes(payload.new.room_id)) {
+            console.log("Change received!", payload);
+            optimisticUpdateMessage(payload.new as Imessage);
+            if(currentRoom?.id == payload.new.room_id)
+              updateMessageInRoom(payload.new as Imessage);
+          }
         }
       )
       .on(
         "postgres_changes",
         { event: "DELETE", schema: "public", table: "messages" },
         (payload) => {
-          console.log("Change received!", payload);
-          optimisticDeleteMessage(payload.old.id);
-          deleteMessageFromRoom(payload.old.id);
+          if (currentUser?.rooms.includes(payload.old.room_id)) {
+            console.log("Change received!", payload);
+            optimisticDeleteMessage(payload.old.id);
+            if(currentRoom?.id == payload.old.room_id)
+              deleteMessageFromRoom(payload.old.id);
+          }
         }
       )
       .subscribe();
 
     return () => {
-      channel.unsubscribe();
+      channel.unsubscribe().catch(err => console.log(err));
     };
-  }, [messages]);
+  }, [messages, currentRoom]);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;

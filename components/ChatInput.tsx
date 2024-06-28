@@ -15,7 +15,7 @@ import { useUsers } from '@/lib/store/users';
 function ChatInput() {
     const user = useUser((state) => state.user);
     const { users } = useUsers()
-    const { currentRoom, addMessageToRoom } = useRooms();
+    const { currentRoom, addMessageToRoom, currentRoomMessages } = useRooms();
     const { replyToMessage, setReplyToMessage, addMessage } = useMessage();
     const setOptimisticId = useMessage((state) => state.setOptimisticId);
     const user2 = users?.find((u) => u?.id == currentRoom?.user2_id)?.display_name;
@@ -24,7 +24,7 @@ function ChatInput() {
         if (!currentRoom) {
             toast.warning("Select a friend to send a message");
         }
-        if (text.trim() && currentRoom) {
+        else if (text.trim()) {
             const supabase = supabaseBrowser();
             setReplyToMessage(undefined);
             const newMessage = {
@@ -57,9 +57,12 @@ function ChatInput() {
         }
     }
 
-    const handleTalkToAi = async (message: string) => {
-        const hf = new HfInference("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");
-        if (message.trim()) {
+    const handleTalkToAi = async (message: string) => {     
+        if (currentRoomMessages.at(currentRoomMessages.length - 1)?.send_by === user?.id) {
+            toast.error("The AI chat Sequence Must Be User, Ai, User, Ai. Delete Your Last Message If It Wasn't Answered By The Ai"); 
+        }
+        else if (message.trim()) {
+            const hf = new HfInference("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");
             const supabase = supabaseBrowser();
             setReplyToMessage(undefined);
             const newMessage = {
@@ -84,42 +87,49 @@ function ChatInput() {
             if (error) {
                 toast.error(error.message);
             }
-            else
-                console.log("message sent");
+            try {
+                const messages = [...currentRoomMessages, newMessage];
 
-            const out = await hf.chatCompletion({
-                model: "mistralai/Mistral-7B-Instruct-v0.2",
-                messages: [{ role: "user", content: message }],
-                max_tokens: 500,
-                temperature: 0.1,
-                seed: 0,
-            });
+                const out = await hf.chatCompletion({
+                    model: "mistralai/Mistral-7B-Instruct-v0.2",
+                    messages: messages.map(message => {
+                        return { role: message.send_by === user?.id ? "user" : "assistant", content: message.text }
+                    }),
+                    max_tokens: 500,
+                    temperature: 0.1,
+                    seed: 0,
+                });
 
-            const aiMessage = {
-                id: uuidv4(),
-                text: out.choices[0].message.content,
-                send_by: currentRoom?.user2_id,
-                is_edit: false,
-                created_at: new Date().toISOString(),
-                users: {
-                    id: currentRoom?.user2_id,
-                    avatar_url: "/ai.png",
+                const aiMessage = {
+                    id: uuidv4(),
+                    text: out.choices[0].message.content,
+                    send_by: currentRoom?.user2_id,
+                    is_edit: false,
                     created_at: new Date().toISOString(),
-                    display_name: "Supabase AI",
-                },
-                room_id: currentRoom?.id,
-                replying_to: newMessage.id,
-            };
-            console.log(currentRoom?.user2_id)
-            addMessage(aiMessage as Imessage);
-            addMessageToRoom(aiMessage as Imessage);
-            setOptimisticId(aiMessage.id);
-            const sendAiMessage = await supabase.from("messages").insert({ id: aiMessage.id, send_by: currentRoom?.user2_id, text: aiMessage.text!, room_id: aiMessage.room_id, replying_to: aiMessage.replying_to });
-            if (sendAiMessage.error) {
-                toast.error(sendAiMessage.error.message);
+                    users: {
+                        id: currentRoom?.user2_id,
+                        avatar_url: "/ai.png",
+                        created_at: new Date().toISOString(),
+                        display_name: "Supabase AI",
+                    },
+                    room_id: currentRoom?.id,
+                    replying_to: newMessage.id,
+                };
+                addMessage(aiMessage as Imessage);
+                addMessageToRoom(aiMessage as Imessage);
+                setOptimisticId(aiMessage.id);
+                const sendAiMessage = await supabase.from("messages").insert({ id: aiMessage.id, send_by: currentRoom?.user2_id, text: aiMessage.text!, room_id: aiMessage.room_id, replying_to: aiMessage.replying_to });
+                if (sendAiMessage.error) {
+                    toast.error(sendAiMessage.error.message);
+                }
             }
-            else
-                console.log("message sent");
+            catch (error) {
+                //@ts-ignore
+                toast.error(error.message);
+            }
+        }
+        else {
+            toast.error("Message can not be empty");
         }
     }
 
